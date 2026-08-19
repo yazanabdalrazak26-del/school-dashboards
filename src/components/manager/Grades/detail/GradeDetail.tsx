@@ -112,6 +112,7 @@ function GradeDetail() {
 
             <AddSectionModal 
                 isOpen={isOpen} 
+                grade={gradeData}
                 onClose={() => setIsOpen(false)} 
                 
             />

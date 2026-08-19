@@ -5,6 +5,7 @@ import type { TransferEmployeeData } from "../../../type/Employee.type";
 
 import { EMPLOYEE_KEYS } from "../employee/useEmployee";
 import { STUDENT_KEYS } from "../students/useStudents";
+import { SCHOOL_KEYS } from "../school/useSchool";
 
 export const useTransferStudent = () => {
     const queryClient = useQueryClient();
@@ -16,6 +17,7 @@ export const useTransferStudent = () => {
         },
         onSuccess : () =>{
             queryClient.invalidateQueries({queryKey: STUDENT_KEYS.all})
+            queryClient.invalidateQueries({queryKey: SCHOOL_KEYS.all})
         }
     });
 };
@@ -30,6 +32,7 @@ export const useTransferEmployee = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: EMPLOYEE_KEYS.all });
+            queryClient.invalidateQueries({queryKey: SCHOOL_KEYS.all})
         },
         
     });

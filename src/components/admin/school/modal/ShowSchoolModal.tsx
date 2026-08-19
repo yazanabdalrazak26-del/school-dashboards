@@ -5,6 +5,7 @@ import { MdClose } from 'react-icons/md';
 import { FaSchool, FaPhone, FaMapMarkerAlt, FaCalendarAlt, FaUsers, FaUserTie, FaBook } from 'react-icons/fa';
 import type { School } from '../../../../type/school.type';
 import { formatDate } from '../../../../utils/utils';
+import { createPortal } from 'react-dom';
 
 interface ShowSchoolModalProps {
   isOpen: boolean;
@@ -16,7 +17,7 @@ function ShowSchoolModal({ isOpen, setIsOpen, school }: ShowSchoolModalProps) {
   if (!isOpen) return null;
 
 
-  return (
+  return createPortal(
     <div className='fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4'>
       <div className='bg-white rounded-2xl p-5 sm:p-6 w-full max-w-lg sm:max-w-xl mx-2 sm:mx-4 max-h-[90vh] overflow-y-auto'>
         <div className='flex justify-between items-center mb-4'>
@@ -128,7 +129,8 @@ function ShowSchoolModal({ isOpen, setIsOpen, school }: ShowSchoolModalProps) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

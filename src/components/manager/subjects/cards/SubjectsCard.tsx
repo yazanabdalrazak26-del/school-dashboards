@@ -117,9 +117,9 @@ function SubjectsCard({subject} : {subject: Subject}) {
                             </h4>
                             {totalTeachers > 0 ? (
                                 <div className="flex flex-wrap gap-2">
-                                    {subject.teachers?.map((teacher: Teacher) => (
+                                    {subject.teachers?.map((teacher: Teacher , index) => (
                                         <span 
-                                            key={teacher.localEmployeeNumber}
+                                            key={index}
                                             className="px-3 py-1 bg-white border border-blue-gray-100 rounded-full text-sm text-dark-blue-700 shadow-sm hover:shadow-md transition-shadow"
                                         >
                                             <FaUser className="inline mr-1 text-blue-gray-400 text-xs" />

@@ -15,7 +15,6 @@ function SectionDetail() {
         navigate(`/manager/grades/${gradeId}`);
     };
 
-
     if (isLoading) {
         return <SectionsSkeleton />;
     }

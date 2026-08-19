@@ -2,30 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { FaTimes, FaSpinner, FaPlus } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { useCounselors } from '../../../../hooks/manager/counselors/useCounselors';
-
 import { getErrorMessage } from '../../../../utils/utils';
-import { useGrade } from '../../../../hooks/manager/grades/useGrades';
 import { useCreateSection } from '../../../../hooks/manager/sections/useSectionMutation';
 import { createPortal } from 'react-dom';
+import type { GradeSectionsResponse } from '../../../../type/manager.type';
 
 type AddSectionModalProps = {
     isOpen: boolean;
+    grade: GradeSectionsResponse;
     onClose: () => void;
 }
 
-function AddSectionModal({ isOpen, onClose }: AddSectionModalProps) {
+function AddSectionModal({ isOpen, grade, onClose }: AddSectionModalProps) {
     const { data: counselorsData, isLoading: counselorsLoading } = useCounselors();
-    const { data: grades, isLoading: gradesLoading } = useGrade();
     const { mutateAsync: createSection, isPending } = useCreateSection();
     
     const [name, setName] = useState('');
-    const [localGradeNumber, setLocalGradeNumber] = useState<number | null>(null);
     const [localCounselorId, setLocalCounselorId] = useState<number | null>(null);
 
     useEffect(() => {
         if (!isOpen) {
             setName('');
-            setLocalGradeNumber(null);
             setLocalCounselorId(null);
         }
     }, [isOpen]);
@@ -33,7 +30,6 @@ function AddSectionModal({ isOpen, onClose }: AddSectionModalProps) {
     if (!isOpen) return null;
 
     const counselors = counselorsData?.data.counselors || [];
-    
 
     const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -43,14 +39,14 @@ function AddSectionModal({ isOpen, onClose }: AddSectionModalProps) {
             return;
         }
 
-        if (!localGradeNumber) {
-            toast.error('Please select a grade');
+        if (!grade) {
+            toast.error('Grade data is missing');
             return;
         }
 
         try {
             await createSection({
-                gradeId: localGradeNumber,
+                gradeId: grade.localGradeNumber,
                 data: {
                     name: name.trim(),
                     localCounselorId: localCounselorId || 0
@@ -85,6 +81,12 @@ function AddSectionModal({ isOpen, onClose }: AddSectionModalProps) {
                     </button>
                 </div>
 
+                {/* Grade Info */}
+                <div className="bg-blue-gray-50 rounded-lg p-3 mb-4">
+                    <p className="text-xs text-blue-gray-500">Adding section to:</p>
+                    <p className="text-sm font-semibold text-dark-blue-800">{grade.gradeName}</p>
+                </div>
+
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-dark-blue-700 mb-1.5">
@@ -95,39 +97,10 @@ function AddSectionModal({ isOpen, onClose }: AddSectionModalProps) {
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             className="w-full px-4 py-2.5 border border-blue-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-dark-blue-700 text-sm"
-                            placeholder="Enter section name"
+                            placeholder="Enter section name (e.g., الشعبة أ)"
                             disabled={isPending}
                             required
                         />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-dark-blue-700 mb-1.5">
-                            Grade <span className="text-red-500">*</span>
-                        </label>
-                        {gradesLoading ? (
-                            <div className="flex items-center justify-center py-3">
-                                <FaSpinner className="animate-spin text-dark-blue-700 text-xl" />
-                            </div>
-                        ) : grades?.length === 0 ? (
-                            <div className="text-sm text-blue-gray-500 bg-blue-gray-50 p-3 rounded-lg text-center">
-                                No grades available
-                            </div>
-                        ) : (
-                            <select
-                                value={localGradeNumber || ''}
-                                onChange={(e) => setLocalGradeNumber(Number(e.target.value))}
-                                className="w-full px-4 py-2.5 border border-blue-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-dark-blue-700 bg-white text-dark-blue-800 text-sm"
-                                disabled={isPending}
-                            >
-                                <option value="">Select a grade</option>
-                                {grades?.map((grade) => (
-                                    <option key={grade.id} value={grade.localGradeNumber}>
-                                        {grade.name}
-                                    </option>
-                                ))}
-                            </select>
-                        )}
                     </div>
 
                     <div>
@@ -158,7 +131,6 @@ function AddSectionModal({ isOpen, onClose }: AddSectionModalProps) {
                             </select>
                         )}
                     </div>
-
 
                     <div className="flex gap-3 mt-6 pt-4 border-t border-blue-gray-100">
                         <button

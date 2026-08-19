@@ -16,10 +16,10 @@ type AddAnnouncementModalProps = {
 function AddAnnouncementModal({ isOpen, setIsOpen }: AddAnnouncementModalProps) {
     if (!isOpen) return null;
 
-    const audienceOptions: AnnouncementAudience[] = [
-        'All', 'Students', 'Teachers', 'Parents', 'Staff',
-        'Employees', 'Section', 'Grade', 'Administrators'
-    ];
+    // const audienceOptions: AnnouncementAudience[] = [
+    //     'All', 'Students', 'Teachers', 'Parents', 'Staff',
+    //     'Employees', 'Section', 'Grade', 'Administrators'
+    // ];
 
     const typeOptions: AnnouncementType[] = ['General', 'Activity'];
 
@@ -128,7 +128,7 @@ function AddAnnouncementModal({ isOpen, setIsOpen }: AddAnnouncementModalProps) 
                             />
                         </div>
 
-                        <div>
+                        {/* <div>
                             <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1.5">
                                 Audience <span className="text-red-500">*</span>
                             </label>
@@ -145,7 +145,7 @@ function AddAnnouncementModal({ isOpen, setIsOpen }: AddAnnouncementModalProps) 
                                     </option>
                                 ))}
                             </select>
-                        </div>
+                        </div> */}
 
                         <div>
                             <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1.5">
