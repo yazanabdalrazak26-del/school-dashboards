@@ -62,3 +62,27 @@ export const getErrorMessage = (error: any): string => {
 
     return 'An unexpected error occurred. Please try again.';
 };
+
+
+export const formatDateForAPI = (date: string | Date): string => {
+  if (!date) return '';
+  
+  const d = typeof date === 'string' ? new Date(date) : date;
+  
+  // Format: YYYY-MM-DDTHH:mm:ss.000Z
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  const seconds = String(d.getSeconds()).padStart(2, '0');
+  
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.000Z`;
+};
+
+export const formatDateForBackend = (date: string): string => {
+  if (!date) return '';
+  // Convert from "2026-08-20T14:30" to "2026-08-20T14:30:00.000Z"
+  const d = new Date(date);
+  return d.toISOString();
+};

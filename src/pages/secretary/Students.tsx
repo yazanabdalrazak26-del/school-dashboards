@@ -36,8 +36,6 @@ function Students() {
         <StudentLits/>
 
         <AddStudentModal isOpen={isOpen} setIsOpen={setIsOpen}/>
-
-
      </div>
   );
 }

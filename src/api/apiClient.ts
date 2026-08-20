@@ -142,7 +142,7 @@ export const secretary = {
     students: {
         getAll: () => api.get<StudentsResponse>('secretary/students'),
         getById: (id: number) => api.get(`/secretary/students/${id}`),
-        getAllGrades: () => api.get<GradeWithSections[]>('/secretary/grades'),
+        getAllGrades: () => api.get<GradeWithSections[]>('/secretary/grades with sections'),
 
         create: (data: AddStudentPayload) => api.post(`/secretary/students` , data),
         update: (data: UpdateStudentRequest ,id:number) => api.put(`/secretary/students/${id}` , data),

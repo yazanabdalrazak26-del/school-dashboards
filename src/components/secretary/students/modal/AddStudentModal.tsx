@@ -1,13 +1,14 @@
-import { FaTimes, FaUserGraduate, FaEnvelope, FaLock, FaPhone, FaCalendar, FaMapMarkerAlt, FaTint, FaSchool, FaChevronDown } from 'react-icons/fa';
+import { FaTimes, FaUserGraduate, FaEnvelope, FaLock, FaPhone, FaCalendar, FaMapMarkerAlt, FaTint, FaSchool, FaChevronDown, FaSpinner } from 'react-icons/fa';
 import { MdOutlineEdit } from 'react-icons/md';
 import { createPortal } from 'react-dom';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import Input from '../../../ui/Input';
-import { getErrorMessage } from '../../../../utils/utils';
+import { formatDateForAPI, getErrorMessage } from '../../../../utils/utils';
 import { useGrades } from '../../../../hooks/secretary/students/useStudents';
 import type { GradeWithSections, AddStudentPayload } from '../../../../type/secretary.type';
 import { useCreateStudent } from '../../../../hooks/secretary/students/useStudentsMutation';
+
 
 type AddStudentModalProps = {
     isOpen: boolean;
@@ -40,8 +41,8 @@ function AddStudentModal({ isOpen, setIsOpen }: AddStudentModalProps) {
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    
+        const { name, value } = e.target;
+        
         if (name === 'localSectionNumber') {
             setFormData((prev) => ({ 
                 ...prev, 
@@ -111,7 +112,12 @@ function AddStudentModal({ isOpen, setIsOpen }: AddStudentModalProps) {
         }
 
         try {
-            await addStudent(formData);
+            const payload = {
+                ...formData,
+                birthDate: formatDateForAPI(formData.birthDate)
+            };
+
+            await addStudent(payload);
             toast.success('Student added successfully');
             setIsOpen(false);
             setFormData({
@@ -135,6 +141,7 @@ function AddStudentModal({ isOpen, setIsOpen }: AddStudentModalProps) {
     };
 
     const availableSections = getSectionsForGrade(formData.localGradeNumber);
+    const hasGrades = grades && grades.length > 0;
 
     return createPortal(
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -160,6 +167,7 @@ function AddStudentModal({ isOpen, setIsOpen }: AddStudentModalProps) {
                         </p>
                     </header>
 
+                    {/* ... rest of your form stays the same ... */}
                     <div className='rounded-lg flex flex-col gap-4 sm:gap-5'>
                         <Input
                             title="Full Name"
@@ -208,14 +216,18 @@ function AddStudentModal({ isOpen, setIsOpen }: AddStudentModalProps) {
                                         onChange={handleGradeChange}
                                         className="w-full px-4 py-2.5 sm:py-3 pl-10 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-dark-blue-500 focus:border-transparent transition-all text-sm sm:text-base bg-white appearance-none cursor-pointer hover:border-dark-blue-400"
                                         required
-                                        disabled={gradesLoading}
+                                        disabled={gradesLoading || !hasGrades}
                                     >
                                         <option value="">Select grade</option>
-                                        {grades?.map((grade) => (
-                                            <option key={grade.localGradeNumber} value={grade.localGradeNumber}>
-                                                {grade.name}
-                                            </option>
-                                        ))}
+                                        {hasGrades ? (
+                                            grades?.map((grade) => (
+                                                <option key={grade.localGradeNumber} value={grade.localGradeNumber}>
+                                                    {grade.name}
+                                                </option>
+                                            ))
+                                        ) : (
+                                            <option value="" disabled>No grades available</option>
+                                        )}
                                     </select>
                                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
                                         <FaChevronDown className="text-lg" />
@@ -223,6 +235,9 @@ function AddStudentModal({ isOpen, setIsOpen }: AddStudentModalProps) {
                                 </div>
                                 {gradesLoading && (
                                     <p className="text-xs text-blue-gray-400 mt-1.5">Loading grades...</p>
+                                )}
+                                {!gradesLoading && !hasGrades && (
+                                    <p className="text-xs text-yellow-500 mt-1.5">No grades available. Please add a grade first.</p>
                                 )}
                             </div>
 
@@ -240,7 +255,7 @@ function AddStudentModal({ isOpen, setIsOpen }: AddStudentModalProps) {
                                         onChange={handleChange}
                                         className="w-full px-4 py-2.5 sm:py-3 pl-10 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-dark-blue-500 focus:border-transparent transition-all text-sm sm:text-base bg-white appearance-none cursor-pointer hover:border-dark-blue-400"
                                         required
-                                        disabled={!formData.localGradeNumber || availableSections.length === 0}
+                                        disabled={!formData.localGradeNumber || availableSections.length === 0 || !hasGrades}
                                     >
                                         <option value="">Select section</option>
                                         {availableSections.map((section) => (
@@ -361,7 +376,7 @@ function AddStudentModal({ isOpen, setIsOpen }: AddStudentModalProps) {
                         <div className='flex xs:flex-row items-center gap-3 sm:gap-4 mt-3'>
                             <button
                                 type="submit"
-                                disabled={isLoading}
+                                disabled={isLoading || !hasGrades}
                                 className='
                                     w-full xs:flex-1 px-5 sm:px-7 py-2.5 sm:py-3 rounded-lg 
                                     bg-dark-blue-600 text-white 

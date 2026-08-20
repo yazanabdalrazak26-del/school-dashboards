@@ -23,10 +23,13 @@ const Subjects = () => {
       <div className="bg-white rounded-2xl shadow-sm border border-blue-gray-100 p-12 text-center">
         <FaBook className="text-5xl text-blue-gray-300 mx-auto mb-4" />
         <p className="text-blue-gray-500 text-lg">No subjects found</p>
-        <button className="mt-4 px-4 py-2 bg-dark-blue-700 text-white rounded-xl hover:bg-dark-blue-600 transition-colors text-sm">
+        <button onClick={() =>setIsOpen(true)} className="mt-4 px-4 py-2 bg-dark-blue-700 text-white rounded-xl hover:bg-dark-blue-600 transition-colors text-sm">
           Add Subject
         </button>
+
+        <AddSubjectModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
       </div>
+
     );
   }
 

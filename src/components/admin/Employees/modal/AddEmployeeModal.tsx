@@ -4,7 +4,8 @@ import { useState } from 'react';
 import type { CreateEmployeePayload } from '../../../../type/Employee.type';
 import { toast } from 'react-toastify';
 import { useAddEmployee } from '../../../../hooks/admin/employee/useEmployeeMutation';
-import { getErrorMessage } from '../../../../utils/utils';
+import { formatDateForAPI, getErrorMessage } from '../../../../utils/utils';
+
 
 type AddEmployeeModalProps = {
     isOpen: boolean;
@@ -73,7 +74,12 @@ function AddEmployeeModal({ isOpen, setIsOpen, schoolId }: AddEmployeeModalProps
         }
 
         try {
-            await addEmployee(data);
+            const payload = {
+                ...data,
+                birthDate: formatDateForAPI(data.birthDate)
+            };
+
+            await addEmployee(payload);
             toast.success('Employee added successfully');
             setIsOpen(false);
             setData({

@@ -27,6 +27,7 @@ export const useGrades = () =>{
         queryKey: STUDENT_KEYS.allGrades,
         queryFn: async () =>{
             const response = await secretary.students.getAllGrades();
+            console.log(response.data)
             return response.data;
         },
 

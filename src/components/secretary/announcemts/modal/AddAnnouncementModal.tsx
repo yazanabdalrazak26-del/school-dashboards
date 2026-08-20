@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import Input from '../../../ui/Input';
 import { useAddAnnouncements } from '../../../../hooks/secretary/annoucements/useAnnouncementMutation';
-import { getErrorMessage } from '../../../../utils/utils';
+import { formatDateForAPI, getErrorMessage } from '../../../../utils/utils';
 import type { AnnouncementAudience, AnnouncementType, AnnouncementPayload } from '../../../../type/secretary.type';
 
 type AddAnnouncementModalProps = {
@@ -16,10 +16,10 @@ type AddAnnouncementModalProps = {
 function AddAnnouncementModal({ isOpen, setIsOpen }: AddAnnouncementModalProps) {
     if (!isOpen) return null;
 
-    // const audienceOptions: AnnouncementAudience[] = [
-    //     'All', 'Students', 'Teachers', 'Parents', 'Staff',
-    //     'Employees', 'Section', 'Grade', 'Administrators'
-    // ];
+    const audienceOptions: AnnouncementAudience[] = [
+        'All', 'Students', 'Teachers', 'Parents', 'Staff',
+        'Employees', 'Section', 'Grade', 'Administrators'
+    ];
 
     const typeOptions: AnnouncementType[] = ['General', 'Activity'];
 
@@ -62,7 +62,13 @@ function AddAnnouncementModal({ isOpen, setIsOpen }: AddAnnouncementModalProps) 
         }
 
         try {
-            await addAnnouncement(formData);
+
+            const payload = {
+                ...formData,
+                expiryDate: formData.expiryDate ? formatDateForAPI(formData.expiryDate) : ''
+            };
+
+            await addAnnouncement(payload);
             toast.success('Announcement added successfully');
             setIsOpen(false);
             setFormData({
@@ -168,7 +174,7 @@ function AddAnnouncementModal({ isOpen, setIsOpen }: AddAnnouncementModalProps) 
 
                         <div>
                             <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1.5">
-                                Expiry Date <span className="text-red-500">*</span>
+                                Expiry Date
                             </label>
                             <input
                                 type="datetime-local"
